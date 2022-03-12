@@ -4,7 +4,13 @@ const { v4: uuidv4 } = require("uuid");
 
 const register = async (req, res) => {
   // add guest to database
-  const { name, surname, status, modified_status, uuid = uuidv4() } = req.body;
+  const {
+    name,
+    surname,
+    status = null,
+    modified_status = null,
+    uuid = uuidv4(),
+  } = req.body;
 
   // add guest query
   const addGuestQuery =

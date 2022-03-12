@@ -37,6 +37,11 @@ JWT_EXPIRATION_TIME=time_in_miliseconds
 JWT_SECRET=arbitrary_value
 ```
 
+### Requirements
+
+- install `node`
+- install `postgresql`
+
 ## Application Architecture
 
 [![](https://mermaid.ink/img/pako:eNo1zj0OgkAQBeCrTKaGC1CYQLCwM2rHUozsIERgcZg1IcDdXf-mesX38mbBylnGBG9CYwOX3AwQLi1OPGntO0iPhxLieAfrKO7ZWoaHZ5lXyIqclK40cfnpZF8lrF4GEJ58pyukGGHP0lNrw8jylga14Z4NJiFakrtBM2zB-dGS8t626gSTmrqJIySv7jwPFSYqnv8obyk83P_U9gIlREJ4)](https://mermaid.live/edit#pako:eNo1zj0OgkAQBeCrTKaGC1CYQLCwM2rHUozsIERgcZg1IcDdXf-mesX38mbBylnGBG9CYwOX3AwQLi1OPGntO0iPhxLieAfrKO7ZWoaHZ5lXyIqclK40cfnpZF8lrF4GEJ58pyukGGHP0lNrw8jylga14Z4NJiFakrtBM2zB-dGS8t626gSTmrqJIySv7jwPFSYqnv8obyk83P_U9gIlREJ4)
