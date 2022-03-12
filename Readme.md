@@ -14,13 +14,13 @@ Simple app to manage your birthday party!
 
 ### Create `.env` file and setup variables.
 
-#### Port
+### Port
 
 ```
 PORT=port_number
 ```
 
-#### Database variables
+### Database variables
 
 ```
 DB_USER=your_db_user_name
@@ -30,11 +30,20 @@ DB_HOST=your_db_host
 DB_PORT=your_db_port
 ```
 
-#### JWT variables
+### JWT variables
 
 ```
 JWT_EXPIRATION_TIME=time_in_miliseconds
 JWT_SECRET=arbitrary_value
+```
+
+### Birthday Party data
+
+#### Birthday data as a env variables.
+
+```
+BIRTHDAY_DATE=yyyy:mm:dd hh:mm:ss
+BIRTHDAY_PLACE=arbitrary_place
 ```
 
 ### Requirements
@@ -58,6 +67,7 @@ JWT_SECRET=arbitrary_value
 | :--------------------------- | :----- | :-----------: | ------------------------ |
 | `/guest/register`            | POST   |       -       | Register guest           |
 | `/guest/auth`                | POST   |       -       | Authenticate guest       |
+| `/guest/logout`              | DELETE |      \*       | Logout guest             |
 | `/guest/change-status`       | PUT    |      \*       | Change invitation status |
 | `/guest/download-invitation` | GET    |      \*       | Download invitation      |
 
@@ -114,8 +124,15 @@ try {
     // get only guest data
     const { rows } = await pool.query(authGuestQuery, queryValues);
 
+
+    const config = {
+      id: rows[0].guest_id,
+      name: rows[0].name,
+      surname: rows[0].surname,
+    };
+
     // create token with id and credentials
-    const token = createToken(rows[0].guest_id);
+    const token = createToken(config);
 
     // save token in cookie
     res.cookie("jwt", token, {
@@ -137,6 +154,16 @@ try {
 {
     "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6y"
 }
+```
+
+## Logout
+
+### Guest can logout.
+
+```javascript
+res.cookie("jwt", "", {
+  maxAge: 1,
+});
 ```
 
 ## Change status
