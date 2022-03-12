@@ -9,7 +9,7 @@ const changeStatus = async (req, res) => {
   const token = req.headers.cookie.substring(4);
 
   // decode token to get id of currently logged in guest
-  const { id } = jwt.decode(token);
+  const { id, modified_status = new Date() } = jwt.decode(token);
 
   // get currently logged in guest query
   const currentGuestQuery = "SELECT * FROM guest WHERE guest_id=$1";
@@ -21,10 +21,11 @@ const changeStatus = async (req, res) => {
   const currentGuest = await pool.query(currentGuestQuery, queryValue);
 
   // update currently logged in guest status
-  const updateGuestStatusQuery = "UPDATE guest SET status=$1 WHERE guest_id=$2";
+  const updateGuestStatusQuery =
+    "UPDATE guest SET status=$1, modified_status=$2 WHERE guest_id=$3";
 
   // query parameter
-  const queryVal = [status, currentGuest.rows[0].guest_id];
+  const queryVal = [status, modified_status, currentGuest.rows[0].guest_id];
 
   const updatedStatus = await pool.query(updateGuestStatusQuery, queryVal);
 
