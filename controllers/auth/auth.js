@@ -1,5 +1,6 @@
 const pool = require("../../db/config");
 const createToken = require("../../token/createToken");
+const jwt = require("jsonwebtoken");
 
 const auth = async (req, res) => {
   try {
@@ -12,8 +13,15 @@ const auth = async (req, res) => {
 
     // get only guest data
     const { rows } = await pool.query(authGuestQuery, queryValues);
-    console.log(rows);
-    const token = createToken(rows[0].guest_id);
+
+    const config = {
+      id: rows[0].guest_id,
+      name: rows[0].name,
+      surname: rows[0].surname,
+    };
+
+    const token = createToken(config);
+
     res.cookie("jwt", token, {
       httpOnly: true,
       expiresIn: process.env.JWT_EXPIRATION_TIME * 1000,
