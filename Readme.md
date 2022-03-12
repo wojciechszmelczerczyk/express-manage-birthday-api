@@ -4,13 +4,25 @@
 
 Simple app to manage your birthday party!
 
-## Techstack:
+## Techstack
 
 - `JavaScript`
 - `Express.js`
 - `PostgreSQL`
 
-## Endpoints:
+## Env setup
+
+Create `.env` file and setup variables
+
+```
+DB_USER=your_db_user_name
+DB_PASSWORD=your_db_password
+DB_NAME=your_db_name
+DB_HOST=your_db_host
+DB_PORT=your_db_port
+```
+
+## Endpoints
 
 ### Guest
 
