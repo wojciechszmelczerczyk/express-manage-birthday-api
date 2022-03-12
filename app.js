@@ -2,12 +2,17 @@ const express = require("express");
 
 const app = express();
 
-// register route
+// routes
 const register = require("./routes/auth/register");
 const auth = require("./routes/auth/auth");
 const changeStatus = require("./routes/changeStatus");
 
+// verify token middleware
+const { requireAuth } = require("./middleware/verifyToken");
+
 const port = process.env.PORT || 3000;
+
+app.put("*", requireAuth);
 
 app.use("/guest", register);
 app.use("/guest", auth);
