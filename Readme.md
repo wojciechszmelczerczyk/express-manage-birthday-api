@@ -12,7 +12,15 @@ Simple app to manage your birthday party!
 
 ## Env setup
 
-Create `.env` file and setup variables.
+### Create `.env` file and setup variables.
+
+#### Port
+
+```
+PORT=port_number
+```
+
+#### Database variables
 
 ```
 DB_USER=your_db_user_name
@@ -22,13 +30,20 @@ DB_HOST=your_db_host
 DB_PORT=your_db_port
 ```
 
+#### JWT variables
+
+```
+JWT_EXPIRATION_TIME=time_in_miliseconds
+JWT_SECRET=arbitrary_value
+```
+
 ## Application Architecture
 
 [![](https://mermaid.ink/img/pako:eNo1zj0OgkAQBeCrTKaGC1CYQLCwM2rHUozsIERgcZg1IcDdXf-mesX38mbBylnGBG9CYwOX3AwQLi1OPGntO0iPhxLieAfrKO7ZWoaHZ5lXyIqclK40cfnpZF8lrF4GEJ58pyukGGHP0lNrw8jylga14Z4NJiFakrtBM2zB-dGS8t626gSTmrqJIySv7jwPFSYqnv8obyk83P_U9gIlREJ4)](https://mermaid.live/edit#pako:eNo1zj0OgkAQBeCrTKaGC1CYQLCwM2rHUozsIERgcZg1IcDdXf-mesX38mbBylnGBG9CYwOX3AwQLi1OPGntO0iPhxLieAfrKO7ZWoaHZ5lXyIqclK40cfnpZF8lrF4GEJ58pyukGGHP0lNrw8jylga14Z4NJiFakrtBM2zB-dGS8t626gSTmrqJIySv7jwPFSYqnv8obyk83P_U9gIlREJ4)
 
 ## Database Architecture
 
-[![](https://mermaid.ink/img/pako:eNptj8EKwzAIhl8leO4T5LyxB-iOgSHVdmFNUow5jNJ3X7q2jI150d_vV3SGLhGDhW7EnE8eB8Hgoqnx7phL4ayrNFt309a0Kj4OJmLgvyAX-WEfpKglf5GrDzVjmExI5HvPdDtc0EBgCeipXjmvUw70znU12FoSysOBi0v1lYlQ-Uxek4DtcczcABZN7TN2YFUKH6b90921vADHO1kM)](https://mermaid.live/edit#pako:eNptj8EKwzAIhl8leO4T5LyxB-iOgSHVdmFNUow5jNJ3X7q2jI150d_vV3SGLhGDhW7EnE8eB8Hgoqnx7phL4ayrNFt309a0Kj4OJmLgvyAX-WEfpKglf5GrDzVjmExI5HvPdDtc0EBgCeipXjmvUw70znU12FoSysOBi0v1lYlQ-Uxek4DtcczcABZN7TN2YFUKH6b90921vADHO1kM)
+[![](https://mermaid.ink/img/pako:eNptkMEKwzAIhl8leN4T5LyxB-iOgSGN7WRNUhI9jNJ3X7q2g416Uf__E8UJ2uQJLLQDlnJm7DMGF02Nj2KuSkWW1qzq2lvTSObYm4iBDo2i-c_7Wqrsj_QiKFp-nBuHmjGMJiTPHZO_7xScIFAOyL5ePy1TDuRBdSXYWnrMTwcuzpXT0aPQxbOkDLbDodAJUCU1r9iClay0Q9sHNmp-A0AsYQY)](https://mermaid.live/edit/#pako:eNptkMEKwzAIhl8leN4T5LyxB-iOgSGN7WRNUhI9jNJ3X7q2g416Uf__E8UJ2uQJLLQDlnJm7DMGF02Nj2KuSkWW1qzq2lvTSObYm4iBDo2i-c_7Wqrsj_QiKFp-nBuHmjGMJiTPHZO_7xScIFAOyL5ePy1TDuRBdSXYWnrMTwcuzpXT0aPQxbOkDLbDodAJUCU1r9iClay0Q9sHNmp-A0AsYQY)
 
 ## Endpoints
 
@@ -38,7 +53,7 @@ DB_PORT=your_db_port
 | :--------------------------- | :----- | :-----------: | ------------------------ |
 | `/guest/register`            | POST   |       -       | Register guest           |
 | `/guest/auth`                | POST   |       -       | Authenticate guest       |
-| `/guest/change-status`       | GET    |      \*       | Change invitation status |
+| `/guest/change-status`       | PUT    |      \*       | Change invitation status |
 | `/guest/download-invitation` | GET    |      \*       | Download invitation      |
 
 ### Owner
@@ -51,10 +66,10 @@ DB_PORT=your_db_port
 
 ## Register
 
-### Save new guest in the database.
+### Save new guest in the database. Guest provide name and surname.
 
 ```javascript
-// add guest to database
+// intercept guest data
 const { name, surname, status, modified_status } = req.body;
 
 // add guest query
@@ -65,4 +80,56 @@ const queryValues = [name, surname, status, modified_status];
 
 // add guest to database
 const guest = await pool.query(addGuestQuery, queryValues);
+```
+
+### API return uuid with which user can authenticate later.
+
+```JSON
+{
+    "copy_uuid": "018ba32d-9159-12d6-a02e-88295d8ef3d2"
+}
+```
+
+## Authenticate
+
+### Authorize guest and return JWT.
+
+```javascript
+try {
+
+    // intercept uuid
+    const { uuid } = req.body;
+
+    // authorize guest query
+    const authGuestQuery = "SELECT * FROM guest WHERE uuid=$1";
+
+    // provide query value
+    const queryValues = [uuid];
+
+    // get only guest data
+    const { rows } = await pool.query(authGuestQuery, queryValues);
+
+    // create token with id and credentials
+    const token = createToken(rows[0].guest_id);
+
+    // save token in cookie
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      expiresIn: process.env.JWT_EXPIRATION_TIME * 1000,
+    });
+
+    // return token
+    res.json({ jwt: token });
+  } catch (err) {
+    res.json(err.message);
+  }
+};
+```
+
+### JWT response
+
+```JSON
+{
+    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6y"
+}
 ```
