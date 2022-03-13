@@ -19,6 +19,7 @@ const changeStatus = async (req, res) => {
       res.json({
         party_date: process.env.BIRTHDAY_DATE,
         your_invitation_change: modified_status,
+        change_too_late: "guest changed invitation status too late",
       });
     } else {
       // intercept jwt from cookie

@@ -365,7 +365,7 @@ modified_status.getTime() >
 {
   "party_date": "2021-05-25 12:00:00.000",
   "your_invitation_change": "2022-03-13 12:26:02.258",
-  "change_to_late": "guest changed invitation status too late"
+  "change_too_late": "guest changed invitation status too late"
 }
 ```
 
