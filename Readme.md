@@ -10,7 +10,32 @@ Simple app to manage your birthday party!
 - `Express.js`
 - `PostgreSQL`
 
-## Env setup
+## Requirements
+
+- install `node`
+- install `postgresql`
+
+## To run app
+
+### Clone repository
+
+```
+git clone repo
+```
+
+### Navigate to project folder
+
+```
+cd /path/to/project
+```
+
+### Install dependencies
+
+```
+npm i
+```
+
+### Env setup
 
 ### Create `.env` file and setup variables.
 
@@ -46,10 +71,55 @@ BIRTHDAY_DATE=yyyy:mm:dd hh:mm:ss
 BIRTHDAY_PLACE=arbitrary_place
 ```
 
-### Requirements
+### Setup invitation filename in `.env`
 
-- install `node`
-- install `postgresql`
+```
+FILE_NAME=invitation.txt
+```
+
+### Setup database
+
+#### In order to setup database run following script:
+
+```sql
+CREATE DATABASE birthday_party
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'en_US.UTF-8'
+    LC_CTYPE = 'en_US.UTF-8'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1;
+```
+
+#### Create table
+
+```sql
+CREATE TABLE IF NOT EXISTS public.guest
+(
+    guest_id integer NOT NULL DEFAULT nextval('guest_guest_id_seq'::regclass),
+    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    surname character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    status character varying COLLATE pg_catalog."default",
+    modified_status timestamp without time zone,
+    "isOwner" boolean DEFAULT false,
+    uuid character varying COLLATE pg_catalog."default",
+    CONSTRAINT guest_pkey PRIMARY KEY (guest_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.guest
+    OWNER to postgres;
+```
+
+### Run app
+
+#### Use `node` cli to run project (`nodemon` recommended)
+
+```
+node app.js
+```
 
 ## Application Architecture
 
@@ -57,7 +127,7 @@ BIRTHDAY_PLACE=arbitrary_place
 
 ## Database Architecture
 
-[![](https://mermaid.ink/img/pako:eNptkMEKwzAIhl8leN4T5LyxB-iOgSGN7WRNUhI9jNJ3X7q2g416Uf__E8UJ2uQJLLQDlnJm7DMGF02Nj2KuSkWW1qzq2lvTSObYm4iBDo2i-c_7Wqrsj_QiKFp-nBuHmjGMJiTPHZO_7xScIFAOyL5ePy1TDuRBdSXYWnrMTwcuzpXT0aPQxbOkDLbDodAJUCU1r9iClay0Q9sHNmp-A0AsYQY)](https://mermaid.live/edit/#pako:eNptkMEKwzAIhl8leN4T5LyxB-iOgSGN7WRNUhI9jNJ3X7q2g416Uf__E8UJ2uQJLLQDlnJm7DMGF02Nj2KuSkWW1qzq2lvTSObYm4iBDo2i-c_7Wqrsj_QiKFp-nBuHmjGMJiTPHZO_7xScIFAOyL5ePy1TDuRBdSXYWnrMTwcuzpXT0aPQxbOkDLbDodAJUCU1r9iClay0Q9sHNmp-A0AsYQY)
+[![](https://mermaid.ink/img/pako:eNptUM0KgzAMfpWSs0_Q88aOO7hjYWQ2ujDbSpsyhvjuq1MPDnNJvj9IMkITLIGGpseUToxdRGe8KvVj1CVTkhmqhV2wVrVE9p3y6OhQSDn-aVo9QugJveJ0fXuKO22N5cz2iE-CktNOubErHd2gXLDcMtn75oIKHEWHbMtl45wyIE8q64Auo8X4MmD8VHx5sCh0tiwhgm6xT1QBZgn1xzegJWbaTOt3Vtf0BUnaapk)](https://mermaid.live/edit/#pako:eNptUM0KgzAMfpWSs0_Q88aOO7hjYWQ2ujDbSpsyhvjuq1MPDnNJvj9IMkITLIGGpseUToxdRGe8KvVj1CVTkhmqhV2wVrVE9p3y6OhQSDn-aVo9QugJveJ0fXuKO22N5cz2iE-CktNOubErHd2gXLDcMtn75oIKHEWHbMtl45wyIE8q64Auo8X4MmD8VHx5sCh0tiwhgm6xT1QBZgn1xzegJWbaTOt3Vtf0BUnaapk)
 
 ## Endpoints
 
@@ -73,11 +143,11 @@ BIRTHDAY_PLACE=arbitrary_place
 
 ### Owner
 
-| Endpoint                           | Method | Authenticated | Action                             |
-| :--------------------------------- | :----- | :-----------: | ---------------------------------- |
-| `/owner/list/accepted`             | GET    |      \*       | List users who accepted invitation |
-| `/owner/list/denied`               | GET    |      \*       | List users who denied invtiation   |
-| `/owner/list/accepted-then-denied` | GET    |      \*       | List users who change their mind   |
+| Endpoint                  | Method | Authenticated | Action                                |
+| :------------------------ | :----- | :-----------: | ------------------------------------- |
+| `/owner/list/accepted`    | GET    |      \*       | List users who accepted invitation    |
+| `/owner/list/no-feedback` | GET    |      \*       | List users don't answer to invtiation |
+| `/owner/list/denied`      | GET    |      \*       | List users who denied invitation      |
 
 ## Register
 
@@ -86,7 +156,7 @@ BIRTHDAY_PLACE=arbitrary_place
 ```JSON
 {
   "name": "Matthew",
-    "surname": "Novak"
+  "surname": "Novak"
 }
 
 ```
@@ -293,4 +363,98 @@ modified_status.getTime() >
   "party_date": "2021-05-25 12:00:00.000",
   "your_invitation_change": "2022-03-13 12:26:02.258"
 }
+```
+
+## Download invitation
+
+### Guest can download to file invitation which include their credentials, info about party and list of participants.
+
+### Current logged in guest
+
+```javascript
+// get token, extract name and surname
+const token = req.headers.cookie.substring(4);
+const { name, surname } = await jwt.decode(token);
+
+const guestCredentials = {
+  name,
+  surname,
+};
+```
+
+### Birthday data
+
+```javascript
+const birthday = {
+  birthday_date: process.env.BIRTHDAY_DATE,
+  birthday_place: process.env.BIRTHDAY_PLACE,
+};
+```
+
+### Fetch guests who accepted invitation.
+
+```javascript
+// get users with accepted status
+const query = "SELECT name,surname FROM guest WHERE status='accepted'";
+
+// query
+const guestsWhoAccepted = await pool.query(query);
+```
+
+### Open stream and write all data to created file.
+
+```javascript
+// create stream
+const stream = fs.createWriteStream(process.env.FILE_NAME, { flags: "a" });
+
+stream.write("BIRTHDAY PARTY INVITATION\n\n");
+
+// write guest info in file
+stream.write("You: ");
+for (prop in guestCredentials) {
+  stream.write(`${guestCredentials[prop]} `);
+}
+
+// write participants in file
+stream.write("\n\nAll guests: ");
+guestsWhoAccepted.rows.forEach((num, i) => {
+  if (i === 0) {
+    stream.write("\n");
+  }
+  stream.write("- ");
+  for (prop in num) {
+    stream.write(`${num[prop]} `);
+  }
+  stream.write(`\n`);
+});
+
+// birthday party info
+stream.write("\n\n");
+stream.write("Birthday info: \n");
+
+for (prop in birthday) {
+  stream.write(birthday[prop] + "\n");
+}
+
+stream.end();
+```
+
+#### Response
+
+```
+BIRTHDAY PARTY INVITATION
+
+You: Tony Kowalsky
+
+All guests:
+- Matthew Star
+- Tony Kowalsky
+- Josh Nas
+- Matteo Wazowsky
+- Wojciech Nowak
+
+
+Birthday info:
+2022-05-25 12:00:00.000
+Las Vegas
 ```
