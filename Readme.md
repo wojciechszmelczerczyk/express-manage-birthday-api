@@ -64,7 +64,7 @@ JWT_SECRET=arbitrary_value
 
 ### Birthday Party data
 
-#### Birthday data as a env variables.
+#### Birthday data as an env variables.
 
 ```
 BIRTHDAY_DATE=yyyy:mm:dd hh:mm:ss
@@ -149,6 +149,8 @@ node app.js
 | `/owner/list/no-feedback` | GET    |      \*       | List users don't answer to invtiation |
 | `/owner/list/denied`      | GET    |      \*       | List users who denied invitation      |
 
+## Guest endpoints
+
 ## Register
 
 ### Guest input
@@ -183,7 +185,7 @@ const queryValues = [name, surname, status, modified_status, uuid];
 const guest = await pool.query(addGuestQuery, queryValues);
 ```
 
-### API return uuid with which user can authenticate later.
+### API return uuid which user can authenticate later with.
 
 ```JSON
 {
@@ -224,6 +226,7 @@ try {
       id: rows[0].guest_id,
       name: rows[0].name,
       surname: rows[0].surname,
+      isOwner: rows[0].isOwner
     };
 
     // create token with id and credentials
@@ -325,7 +328,7 @@ const queryVal = [status, modified_status, currentGuest.rows[0].guest_id];
 await pool.query(updateGuestStatusQuery, queryVal);
 ```
 
-### Response
+### When status update succesfully, give following response:
 
 ```JSON
 {
@@ -339,7 +342,7 @@ await pool.query(updateGuestStatusQuery, queryVal);
 status !== "accepted" && status !== "denied";
 ```
 
-### Response
+### When provided status is wrong, give following response:
 
 ```JSON
 {
@@ -356,12 +359,13 @@ modified_status.getTime() >
   new Date(process.env.BIRTHDAY_DATE).getTime() - offsetInMiliseconds;
 ```
 
-### Response
+### When status changed later, response with both dates and error description.
 
 ```JSON
 {
   "party_date": "2021-05-25 12:00:00.000",
-  "your_invitation_change": "2022-03-13 12:26:02.258"
+  "your_invitation_change": "2022-03-13 12:26:02.258",
+  "change_to_late": "guest changed invitation status too late"
 }
 ```
 
@@ -439,7 +443,7 @@ for (prop in birthday) {
 stream.end();
 ```
 
-#### Response
+#### Invitation file response sample
 
 ```
 BIRTHDAY PARTY INVITATION
@@ -457,4 +461,63 @@ All guests:
 Birthday info:
 2022-05-25 12:00:00.000
 Las Vegas
+```
+
+## Owner endpoints
+
+### Check if owner middleware
+
+```javascript
+const verifyOwner = (req, res, next) => {
+  // intercept token from request
+  const token = req.headers.cookie.substring(4);
+  // if currently logged in user is admin(owner)
+  const { isOwner } = jwt.decode(token);
+  // give handler to next function
+  if (isOwner) {
+    next();
+    // otherwise get an error
+  } else {
+    res.json({ no_admin_error: "you don't have access to owner resources" });
+  }
+};
+```
+
+### Owner routes contain two middelwares. One check if jwt is correct, second check privelage.
+
+```javascript
+router.get("/accepted", [requireAuth, verifyOwner], listGuestsWhoAccepted);
+```
+
+### Get lists of guests
+
+#### Owner can check three kind of lists: guests who accepted the invitation, those who didn't gave any feedback and those who rejected invitation.
+
+```javascript
+const query =
+  "SELECT name,surname, modified_status FROM guest WHERE status='denied'";
+const guestsWhoDenied = await pool.query(query);
+res.json(guestsWhoDenied.rows);
+```
+
+#### Guest who denied invitation response sample
+
+```JSON
+[
+    {
+        "name": "Julio",
+        "surname": "Cesar",
+        "modified_status": "2022-03-12T20:06:34.469Z"
+    },
+    {
+        "name": "Patrycjusz",
+        "surname": "Zycinski",
+        "modified_status": "2022-03-12T20:11:52.074Z"
+    },
+    {
+        "name": "Matteoo",
+        "surname": "Wazowskyy",
+        "modified_status": "2022-03-12T20:12:14.987Z"
+    }
+]
 ```

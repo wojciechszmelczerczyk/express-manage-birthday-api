@@ -7,6 +7,8 @@ router.use(express.json());
 // controller
 const { logout } = require("../../controllers/auth/logout");
 
-router.delete("/logout", logout);
+const { requireAuth } = require("../../middleware/verifyToken");
+
+router.delete("/logout", requireAuth, logout);
 
 module.exports = router;

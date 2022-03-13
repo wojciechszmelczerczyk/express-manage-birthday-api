@@ -10,19 +10,21 @@ const logout = require("./routes/auth/logout");
 const changeStatus = require("./routes/changeStatus");
 const downloadInvitation = require("./routes/downloadInvitation");
 
+const listGuests = require("./routes/admin/listGuests");
+
 // verify token middleware
-const { requireAuth } = require("./middleware/verifyToken");
+// const { requireAuth } = require("./middleware/verifyToken");
+
+// const { verifyOwner } = require("./middleware/verifyOwner");
 
 const port = process.env.PORT || 3000;
-
-app.get("*", requireAuth);
-app.put("*", requireAuth);
-app.delete("*", requireAuth);
 
 app.use("/guest", register);
 app.use("/guest", auth);
 app.use("/guest", logout);
 app.use("/guest", changeStatus);
 app.use("/guest", downloadInvitation);
+
+app.use("/owner/list", listGuests);
 
 app.listen(port, () => console.log(`Server listening on port:${port}`));

@@ -18,6 +18,7 @@ const auth = async (req, res) => {
       id: rows[0].guest_id,
       name: rows[0].name,
       surname: rows[0].surname,
+      isOwner: rows[0].isOwner,
     };
 
     const token = createToken(config);

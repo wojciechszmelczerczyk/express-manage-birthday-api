@@ -7,6 +7,8 @@ router.use(express.json());
 // controller
 const { downloadInvitation } = require("../controllers/downloadInvitation");
 
-router.get("/download-invitation", downloadInvitation);
+const { requireAuth } = require("../middleware/verifyToken");
+
+router.get("/download-invitation", requireAuth, downloadInvitation);
 
 module.exports = router;

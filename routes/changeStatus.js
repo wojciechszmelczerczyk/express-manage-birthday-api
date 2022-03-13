@@ -7,6 +7,8 @@ router.use(express.json());
 // controller
 const { changeStatus } = require("../controllers/changeStatus");
 
-router.put("/change-status", changeStatus);
+const { requireAuth } = require("../middleware/verifyToken");
+
+router.put("/change-status", requireAuth, changeStatus);
 
 module.exports = router;
