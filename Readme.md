@@ -113,7 +113,7 @@ CREATE TABLE guest (
 
 ```sql
 UPDATE guest
-SET isOwner = true
+SET "isOwner" = true
 WHERE guest_id = 1;
 ```
 
