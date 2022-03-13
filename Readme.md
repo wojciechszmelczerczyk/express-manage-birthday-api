@@ -109,6 +109,14 @@ CREATE TABLE guest (
 );
 ```
 
+#### Change in database one of the user isOwner field to true in order to use admin endpoints.
+
+```sql
+UPDATE guest
+SET isOwner = true
+WHERE guest_id = 1;
+```
+
 ### Setup Postman environment
 
 #### Import file included in project.
