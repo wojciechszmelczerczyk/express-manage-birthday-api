@@ -79,6 +79,8 @@ FILE_NAME=invitation.txt
 
 ### Setup database
 
+#### Login to postgresql as superuser.
+
 #### In order to setup database run following script:
 
 ```sql
@@ -95,22 +97,16 @@ CREATE DATABASE birthday_party
 #### Create table
 
 ```sql
-CREATE TABLE IF NOT EXISTS public.guest
-(
-    guest_id integer NOT NULL DEFAULT nextval('guest_guest_id_seq'::regclass),
-    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    surname character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    status character varying COLLATE pg_catalog."default",
-    modified_status timestamp without time zone,
-    "isOwner" boolean DEFAULT false,
-    uuid character varying COLLATE pg_catalog."default",
-    CONSTRAINT guest_pkey PRIMARY KEY (guest_id)
-)
+CREATE TABLE guest (
+	guest_id serial PRIMARY KEY,
+	name VARCHAR ( 50 )  NOT NULL,
+	surname VARCHAR ( 50 ) NOT NULL,
+	uuid VARCHAR ( 50 )  NOT NULL,
+  "isOwner" BOOLEAN DEFAULT FALSE,
+  status VARCHAR ( 50 )  DEFAULT NULL,
+	modified_status TIMESTAMP DEFAULT NULL
 
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.guest
-    OWNER to postgres;
+);
 ```
 
 ### Setup Postman environment
