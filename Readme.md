@@ -113,6 +113,10 @@ ALTER TABLE IF EXISTS public.guest
     OWNER to postgres;
 ```
 
+### Setup Postman environment
+
+#### Import file included in project.
+
 ### Run app
 
 #### Use `node` cli to run project (`nodemon` recommended)
