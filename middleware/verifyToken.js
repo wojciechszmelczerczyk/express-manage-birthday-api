@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const requireAuth = (req, res, next) => {
   // intercept token from request
   const token = req.headers.cookie.substring(4);
-  console.log(token);
+
   if (token) {
     jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
       if (err) {
