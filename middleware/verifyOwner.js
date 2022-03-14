@@ -1,11 +1,11 @@
 require("dotenv").config();
-const jwt = require("jsonwebtoken");
+const { decode } = require("jsonwebtoken");
 
 const verifyOwner = (req, res, next) => {
   // intercept token from request
   const token = req.headers.cookie.substring(4);
 
-  const { isOwner } = jwt.decode(token);
+  const { isOwner } = decode(token);
   if (isOwner) {
     next();
   } else {

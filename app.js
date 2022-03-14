@@ -12,11 +12,6 @@ const downloadInvitation = require("./routes/downloadInvitation");
 
 const listGuests = require("./routes/admin/listGuests");
 
-// verify token middleware
-// const { requireAuth } = require("./middleware/verifyToken");
-
-// const { verifyOwner } = require("./middleware/verifyOwner");
-
 const port = process.env.PORT || 3000;
 
 app.use("/guest", register);
