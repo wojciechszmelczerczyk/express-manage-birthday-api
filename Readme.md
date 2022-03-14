@@ -4,6 +4,33 @@
 
 Simple app to manage your birthday party!
 
+## Table of contents
+
+- [Techstack](#techstack)
+- [Requirements](#requirements)
+- [To run app](#to-run-app)
+  - [Clone repository](#clone-repository)
+  - [Navigate to project folder](#navigate-to-project-folder)
+  - [Install dependencies](#install-dependencies)
+  - [Env setup](#env-setup)
+  - [Setup database](#setup-database)
+  - [Setup Postman environment](#setup-postman-environment)
+  - [Run app](#run-app)
+- [Application architecture](#application-architecture)
+- [Database architecture](#database-architecture)
+- [Endpoints](#endpoints)
+
+  - [Guest endpoints](#guest-endpoints)
+
+    - [Register](#register)
+    - [Authenticate](#authenticate)
+    - [Logout](#logout)
+    - [Change status](#change-status)
+    - [Download invitation](#download-invitation)
+
+  - [Owner endpoints](#owner-endpoints)
+    - [Get lists of guests](#get-lists-of-guests)
+
 ## Techstack
 
 - `JavaScript`
