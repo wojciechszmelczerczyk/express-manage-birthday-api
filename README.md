@@ -168,21 +168,21 @@ node app.js
 
 ### Guest
 
-| Endpoint                     | Method | Authenticated | Action                   |
-| :--------------------------- | :----- | :-----------: | ------------------------ |
-| `/guest/register`            | POST   |       -       | Register guest           |
-| `/guest/auth`                | POST   |       -       | Authenticate guest       |
-| `/guest/logout`              | DELETE |      \*       | Logout guest             |
-| `/guest/change-status`       | PUT    |      \*       | Change invitation status |
-| `/guest/download-invitation` | GET    |      \*       | Download invitation      |
+| Method |                      Endpoint                       |
+| :----: | :-------------------------------------------------: |
+|  POST  |    [`/guest/register`](./docs/guest/register.md)    |
+|  POST  |       [`/guest/auth`](./docs/guest/login.md)        |
+| DELETE |      [`/guest/logout`](./docs/guest/delete.md)      |
+|  PUT   |    [`/guest/change-status`](./docs/guest/put.md)    |
+|  GET   | [`/guest/download-invitation`](./docs/guest/get.md) |
 
 ### Owner
 
-| Endpoint                  | Method | Authenticated | Action                                |
-| :------------------------ | :----- | :-----------: | ------------------------------------- |
-| `/owner/list/accepted`    | GET    |      \*       | List users who accepted invitation    |
-| `/owner/list/no-feedback` | GET    |      \*       | List users don't answer to invtiation |
-| `/owner/list/denied`      | GET    |      \*       | List users who denied invitation      |
+| Method |                           Endpoint                            |
+| :----: | :-----------------------------------------------------------: |
+|  GET   |    [`/owner/list/accepted`](./docs/owner/list-accepted.md)    |
+|  GET   | [`/owner/list/no-feedback`](./docs/owner/list-no-feedback.md) |
+|  GET   |      [`/owner/list/denied`](./docs/owner/list-denied.md)      |
 
 ## Guest endpoints
 
