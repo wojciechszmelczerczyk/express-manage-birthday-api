@@ -1,13 +1,17 @@
 {
   "name": "express-birthday-app",
   "version": "1.0.0",
-  "description": "",
+  "author": "Wojciech Szmelczerczyk <szmelczerczykwojciech@gmail.com>",
+  "description": "Birthday management REST API",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon index.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "REST API",
+    "node",
+    "express"
+  ],
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.0.0",
