@@ -1,10 +1,10 @@
-# Download invitation
+# Get list of guests
 
 ## Description
 
-Download invitation to txt file.
+Get list of guests who have accepted an invitation.
 
-<b>URL:</b> `/guest/download-invitation`
+<b>URL:</b> `/owner/list/accepted`
 
 <b>Method:</b> `GET`
 

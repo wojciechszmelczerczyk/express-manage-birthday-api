@@ -1,10 +1,10 @@
-# Download invitation
+# Get list of guests
 
 ## Description
 
-Download invitation to txt file.
+Get list of guests who doesn't submit an invitation.
 
-<b>URL:</b> `/guest/download-invitation`
+<b>URL:</b> `/owner/list/no-feedback`
 
 <b>Method:</b> `GET`
 
@@ -20,7 +20,7 @@ Condition: If provided data is correct.
 
 ### Context example
 
-API return list of user who didn't submit their invitation status.
+API return list of users who doesn't submit their invitation status.
 
 ```json
 [
