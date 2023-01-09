@@ -10,6 +10,8 @@ Download invitation to txt file.
 
 <b>Authorized:</b> `YES`
 
+<b>Role:</b> `Guest`
+
 ## Success Response
 
 Code: `200 OK`
